@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The United Effort Resource Directory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2em;
+        }
+        
+        .search-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .filter-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .filter-btn.active {
+            background: #764ba2;
+        }
+        
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .resource-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid #667eea;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .resource-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .resource-category {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .resource-description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .resource-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+        
+        .detail-icon {
+            width: 16px;
+            height: 16px;
+            fill: #667eea;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2em;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Social Services Resource Directory</h1>
+            <p class="subtitle">Find the support services you need</p>
+        </header>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalResources">45</span>
+                <span class="stat-label">Total Resources</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="filteredCount">45</span>
+                <span class="stat-label">Currently Showing</span>
+            </div>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" class="search-box" id="searchInput" placeholder="Search for benefits, housing, employment, or other services...">
+            <div class="filters">
+                <button class="filter-btn active" data-category="all">All Services</button>
+                <button class="filter-btn" data-category="benefits">Benefits</button>
+                <button class="filter-btn" data-category="housing">Housing</button>
+                <button class="filter-btn" data-category="employment">Employment</button>
+                <button class="filter-btn" data-category="veterans">Veterans</button>
+                <button class="filter-btn" data-category="personal-docs">Personal Documents</button>
+                <button class="filter-btn" data-category="services">Other Services</button>
+            </div>
+        </div>
+        
+        <div class="resources-grid" id="resourcesGrid">
+            <!-- Resources will be populated by JavaScript -->
+        </div>
+        
+        <div class="no-results" id="noResults" style="display: none;">
+            No resources found matching your search criteria.
+        </div>
+    </div>
+
+    <script>
+        const resources = [
+            // Benefits
+            {
+                title: "CalFresh (Food Stamps)",
+                category: "benefits",
+                description: "Monthly food assistance for eligible individuals and families",
+                provider: "County Social Services",
+                difficulty: "low",
+                canDo: "Benefit application volunteer or specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "CalWORKs (Cash Aid)",
+                category: "benefits",
+                description: "Temporary cash aid for families with children",
+                provider: "County Social Services",
+                difficulty: "medium",
+                canDo: "Benefit application volunteer or specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "General Assistance",
+                category: "benefits",
+                description: "Cash aid, homeless shelter screening, housing assistance, special needs support",
+                provider: "SCC Social Services Agency",
+                difficulty: "medium",
+                canDo: "Benefit application volunteer or specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "Medi-Cal (Healthcare)",
+                category: "benefits",
+                description: "Free or low-cost health insurance coverage",
+                provider: "County Social Services",
+                difficulty: "medium",
+                canDo: "Benefit application volunteer or specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "SSI (Supplemental Security Income)",
+                category: "benefits",
+                description: "Monthly payments for elderly (65+) and disabled individuals",
+                provider: "Social Security Administration",
+                difficulty: "high",
+                canDo: "SSI/SSDI specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "SSDI (Social Security Disability)",
+                category: "benefits",
+                description: "Disability benefits for those who worked and paid into Social Security",
+                provider: "Social Security Administration",
+                difficulty: "high",
+                canDo: "SSI/SSDI specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "IHSS (In Home Supportive Services)",
+                category: "benefits",
+                description: "Personal care services for people with disabilities",
+                provider: "County Social Services",
+                difficulty: "medium",
+                canDo: "Benefit application volunteer or specialist",
+                location: "Onsite"
+            },
+            
+            // Housing Solutions
+            {
+                title: "Affordable Housing Waitlist Application",
+                category: "housing",
+                description: "Apply for affordable housing programs (275 applications in last 6 months)",
+                provider: "Various Housing Authorities",
+                difficulty: "medium",
+                canDo: "Onsite volunteer or Housing specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "Home Sharing Programs",
+                category: "housing",
+                description: "Match individuals with shared housing opportunities",
+                provider: "Local Housing Organizations",
+                difficulty: "medium",
+                canDo: "Onsite volunteer or Housing specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "Permanent Supportive Housing",
+                category: "housing",
+                description: "Long-term housing with supportive services (16 clients served in last 6 months)",
+                provider: "Various PSH Providers",
+                difficulty: "high",
+                canDo: "Housing specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "Rapid Rehousing",
+                category: "housing",
+                description: "Short-term rental assistance and services (11 clients served in last 6 months)",
+                provider: "RRH Providers",
+                difficulty: "high",
+                canDo: "Housing specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "Section 8 Housing Choice Voucher",
+                category: "housing",
+                description: "Rental assistance vouchers for eligible families",
+                provider: "Housing Authority",
+                difficulty: "medium",
+                canDo: "Onsite volunteer or Housing specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "HUD-VASH Housing Voucher",
+                category: "veterans",
+                description: "Housing vouchers specifically for veterans",
+                provider: "VA and Housing Authority",
+                difficulty: "high",
+                canDo: "Veteran service specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "Housing Deposit and First Month Rent",
+                category: "housing",
+                description: "Financial assistance for move-in costs (7 clients served in last 6 months)",
+                provider: "Various Organizations",
+                difficulty: "high",
+                canDo: "Housing specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "Housing Recertification",
+                category: "housing",
+                description: "Annual recertification for housing programs",
+                provider: "Housing Authorities",
+                difficulty: "low",
+                canDo: "Housing specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "LIHEAP (Energy Assistance)",
+                category: "housing",
+                description: "Low Income Home Energy Assistance Program",
+                provider: "County Social Services",
+                difficulty: "low",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "CARE (Energy Rate Assistance)",
+                category: "housing",
+                description: "California Alternative Rate for Energy - reduced utility rates",
+                provider: "PG&E and other utilities",
+                difficulty: "low",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            
+            // Employment
+            {
+                title: "Employment Support Services",
+                category: "employment",
+                description: "Career coaching, job readiness, resume prep, workplace conflict resolution (13 clients in last 6 months)",
+                provider: "Employment Specialists",
+                difficulty: "high",
+                canDo: "Employment support specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "Self-Sufficiency Program (UEO)",
+                category: "employment",
+                description: "Comprehensive program to achieve economic independence (29 clients in last 6 months)",
+                provider: "UEO",
+                difficulty: "high",
+                canDo: "SSP specialist",
+                location: "Onsite/Offsite"
+            },
+            
+            // Personal Documents
+            {
+                title: "Birth Certificate Application",
+                category: "personal-docs",
+                description: "Obtain certified copies of birth certificates",
+                provider: "Vital Records Office",
+                difficulty: "low",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "DMV ID Application Fee Waiver",
+                category: "personal-docs",
+                description: "Fee waiver for California ID cards for low-income individuals",
+                provider: "DMV",
+                difficulty: "low",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "Replacement Green Card Application",
+                category: "personal-docs",
+                description: "Replace lost or damaged Permanent Resident Cards",
+                provider: "USCIS",
+                difficulty: "medium",
+                canDo: "Immigration specialist",
+                location: "Onsite"
+            },
+            {
+                title: "Employment Authorization Application",
+                category: "personal-docs",
+                description: "Apply for work permits and employment authorization",
+                provider: "USCIS",
+                difficulty: "medium",
+                canDo: "Immigration specialist",
+                location: "Onsite"
+            },
+            {
+                title: "Naturalization Application",
+                category: "personal-docs",
+                description: "Apply for U.S. citizenship",
+                provider: "USCIS",
+                difficulty: "high",
+                canDo: "Immigration specialist",
+                location: "Onsite"
+            },
+            {
+                title: "Criminal Record Clearance",
+                category: "personal-docs",
+                description: "Clear criminal records or obtain certificates",
+                provider: "Court System",
+                difficulty: "medium",
+                canDo: "Legal specialist",
+                location: "Onsite"
+            },
+            
+            // Veteran Services
+            {
+                title: "DD214 Request",
+                category: "veterans",
+                description: "Obtain military discharge records",
+                provider: "National Archives",
+                difficulty: "low",
+                canDo: "Veteran service specialist",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "Discharge Upgrade",
+                category: "veterans",
+                description: "Apply to upgrade military discharge status",
+                provider: "Military Review Boards",
+                difficulty: "high",
+                canDo: "Veteran service specialist (refer out)",
+                location: "Refer out"
+            },
+            {
+                title: "Service-Connected Disability Application",
+                category: "veterans",
+                description: "Apply for VA disability benefits",
+                provider: "VA",
+                difficulty: "high",
+                canDo: "Veteran service specialist (refer out)",
+                location: "Refer out"
+            },
+            {
+                title: "VA Pension Application",
+                category: "veterans",
+                description: "Apply for VA pension benefits",
+                provider: "VA",
+                difficulty: "high",
+                canDo: "Veteran service specialist (refer out)",
+                location: "Refer out"
+            },
+            
+            // Other Services
+            {
+                title: "YMCA Membership Application",
+                category: "services",
+                description: "Reduced-cost gym and recreation center membership",
+                provider: "YMCA",
+                difficulty: "low",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "LifeLine Phone Service",
+                category: "services",
+                description: "Free phone service for low-income individuals",
+                provider: "Telecom Providers",
+                difficulty: "low",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "Mail Service (748 Mercy Street)",
+                category: "services",
+                description: "Mail holding and forwarding service",
+                provider: "Local Organization",
+                difficulty: "low",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "Shelter Referral",
+                category: "services",
+                description: "Emergency temporary shelter placement",
+                provider: "Homeless Services",
+                difficulty: "medium",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "Safe Parking Referral",
+                category: "services",
+                description: "Safe overnight parking for people living in vehicles",
+                provider: "Safe Parking Programs",
+                difficulty: "medium",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "Caltrain Clipper Card",
+                category: "services",
+                description: "Public transportation passes",
+                provider: "Caltrain",
+                difficulty: "low",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "UPLIFT Pass (VTA)",
+                category: "services",
+                description: "Universal Pass for Life Improvement From Transportation",
+                provider: "VTA",
+                difficulty: "low",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "Paratransit Pass (VTA ACCESS)",
+                category: "services",
+                description: "Specialized transportation for people with disabilities",
+                provider: "VTA",
+                difficulty: "medium",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "Disabled Person (DP) Parking Placard",
+                category: "services",
+                description: "Disability parking permits",
+                provider: "DMV",
+                difficulty: "low",
+                canDo: "Onsite volunteer",
+                location: "Onsite"
+            },
+            {
+                title: "Reasonable Accommodation Request",
+                category: "services",
+                description: "Request accommodations for disabilities",
+                provider: "Various Organizations",
+                difficulty: "medium",
+                canDo: "Disability specialist",
+                location: "Onsite"
+            },
+            {
+                title: "VI-SPDAT Assessment",
+                category: "services",
+                description: "Vulnerability Index - Service Prioritization Decision Assessment Tool",
+                provider: "Homeless Services",
+                difficulty: "medium",
+                canDo: "Trained assessor",
+                location: "Onsite"
+            },
+            {
+                title: "MyConnectSV",
+                category: "services",
+                description: "Technology access and digital literacy program",
+                provider: "MyConnectSV Team",
+                difficulty: "low",
+                canDo: "MyConnectSV team",
+                location: "Onsite/Offsite"
+            },
+            {
+                title: "Homelessness Prevention",
+                category: "housing",
+                description: "Rental assistance and ongoing support for housed clients",
+                provider: "HPS specialists",
+                difficulty: "high",
+                canDo: "HPS specialist",
+                location: "Onsite/Offsite"
+            }
+        ];
+
+        let filteredResources = [...resources];
+        
+        function renderResources() {
+            const grid = document.getElementById('resourcesGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (filteredResources.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            
+            grid.innerHTML = filteredResources.map(resource => `
+                <div class="resource-card">
+                    <div class="resource-category">${resource.category.charAt(0).toUpperCase() + resource.category.slice(1).replace('-', ' ')}</div>
+                    <h3 class="resource-title">${resource.title}</h3>
+                    <p class="resource-description">${resource.description}</p>
+                    <div class="resource-details">
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            <span>Provider: ${resource.provider}</span>
+                        </div>
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <span>Difficulty: ${resource.difficulty}</span>
+                        </div>
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24">
+                                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-1 16H9V7h10v14z"/>
+                            </svg>
+                            <span>Who can help: ${resource.canDo}</span>
+                        </div>
+                        <div class="detail-item">
+                            <svg class="detail-icon" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            <span>Location: ${resource.location}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('filteredCount').textContent = filteredResources.length;
+        }
+        
+        function filterResources() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
+            
+            filteredResources = resources.filter(resource => {
+                const matchesSearch = resource.title.toLowerCase().includes(searchTerm) ||
+                                    resource.description.toLowerCase().includes(searchTerm) ||
+                                    resource.provider.toLowerCase().includes(searchTerm);
+                                    
+                const matchesCategory = activeCategory === 'all' || resource.category === activeCategory;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            renderResources();
+        }
+        
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterResources);
+        
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterResources();
+            });
+        });
+        
+        // Initial render
+        renderResources();
+    </script>
+</body>
+</html>
