@@ -98,6 +98,29 @@
         .filter-btn.active {
             background: #764ba2;
         }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .controls label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #333;
+            font-size: 0.95em;
+        }
+        .controls select {
+            padding: 8px 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            outline: none;
+            background: white;
+        }
         
         .resources-grid {
             display: grid;
@@ -169,6 +192,27 @@
             color: white;
             font-size: 1.2em;
         }
+
+        .schema-errors {
+            margin-top: 15px;
+            background: rgba(255, 99, 71, 0.95);
+            color: white;
+            border-radius: 10px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        .schema-errors h4 { margin-bottom: 6px; }
+        .schema-errors ul { margin-left: 18px; }
+        .group-header {
+            grid-column: 1 / -1;
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-left: 5px solid #764ba2;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-weight: 600;
+            color: #333;
+        }
         
         .stats {
             display: flex;
@@ -209,26 +253,46 @@
         
         <div class="stats">
             <div class="stat-item">
-                <span class="stat-number" id="totalResources">45</span>
+                <span class="stat-number" id="totalResources">0</span>
                 <span class="stat-label">Total Resources</span>
             </div>
             <div class="stat-item">
-                <span class="stat-number" id="filteredCount">45</span>
+                <span class="stat-number" id="filteredCount">0</span>
                 <span class="stat-label">Currently Showing</span>
             </div>
         </div>
         
         <div class="search-container">
             <input type="text" class="search-box" id="searchInput" placeholder="Search for benefits, housing, employment, or other services...">
-            <div class="filters">
+            <div class="filters" id="filters">
                 <button class="filter-btn active" data-category="all">All Services</button>
-                <button class="filter-btn" data-category="benefits">Benefits</button>
-                <button class="filter-btn" data-category="housing">Housing</button>
-                <button class="filter-btn" data-category="employment">Employment</button>
-                <button class="filter-btn" data-category="veterans">Veterans</button>
-                <button class="filter-btn" data-category="personal-docs">Personal Documents</button>
-                <button class="filter-btn" data-category="services">Other Services</button>
+                <!-- Dynamic category buttons will be injected here -->
             </div>
+            <div class="controls">
+                <label>
+                    Sort by:
+                    <select id="sortBy" aria-label="Sort by">
+                        <option value="title">Title</option>
+                        <option value="difficulty">Difficulty</option>
+                        <option value="provider">Provider</option>
+                    </select>
+                </label>
+                <label>
+                    Order:
+                    <select id="sortOrder" aria-label="Sort order">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </label>
+                <label id="groupByWrapper" style="display:none">
+                    Group:
+                    <select id="groupBy" aria-label="Group by">
+                        <option value="none">None</option>
+                        <option value="subgroup">Subgroup</option>
+                    </select>
+                </label>
+            </div>
+            <div class="schema-errors" id="schemaErrors" style="display:none"></div>
         </div>
         
         <div class="resources-grid" id="resourcesGrid">
@@ -241,416 +305,103 @@
     </div>
 
     <script>
-        const resources = [
-            // Benefits
-            {
-                title: "CalFresh (Food Stamps)",
-                category: "benefits",
-                description: "Monthly food assistance for eligible individuals and families",
-                provider: "County Social Services",
-                difficulty: "low",
-                canDo: "Benefit application volunteer or specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "CalWORKs (Cash Aid)",
-                category: "benefits",
-                description: "Temporary cash aid for families with children",
-                provider: "County Social Services",
-                difficulty: "medium",
-                canDo: "Benefit application volunteer or specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "General Assistance",
-                category: "benefits",
-                description: "Cash aid, homeless shelter screening, housing assistance, special needs support",
-                provider: "SCC Social Services Agency",
-                difficulty: "medium",
-                canDo: "Benefit application volunteer or specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "Medi-Cal (Healthcare)",
-                category: "benefits",
-                description: "Free or low-cost health insurance coverage",
-                provider: "County Social Services",
-                difficulty: "medium",
-                canDo: "Benefit application volunteer or specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "SSI (Supplemental Security Income)",
-                category: "benefits",
-                description: "Monthly payments for elderly (65+) and disabled individuals",
-                provider: "Social Security Administration",
-                difficulty: "high",
-                canDo: "SSI/SSDI specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "SSDI (Social Security Disability)",
-                category: "benefits",
-                description: "Disability benefits for those who worked and paid into Social Security",
-                provider: "Social Security Administration",
-                difficulty: "high",
-                canDo: "SSI/SSDI specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "IHSS (In Home Supportive Services)",
-                category: "benefits",
-                description: "Personal care services for people with disabilities",
-                provider: "County Social Services",
-                difficulty: "medium",
-                canDo: "Benefit application volunteer or specialist",
-                location: "Onsite"
-            },
-            
-            // Housing Solutions
-            {
-                title: "Affordable Housing Waitlist Application",
-                category: "housing",
-                description: "Apply for affordable housing programs (275 applications in last 6 months)",
-                provider: "Various Housing Authorities",
-                difficulty: "medium",
-                canDo: "Onsite volunteer or Housing specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "Home Sharing Programs",
-                category: "housing",
-                description: "Match individuals with shared housing opportunities",
-                provider: "Local Housing Organizations",
-                difficulty: "medium",
-                canDo: "Onsite volunteer or Housing specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "Permanent Supportive Housing",
-                category: "housing",
-                description: "Long-term housing with supportive services (16 clients served in last 6 months)",
-                provider: "Various PSH Providers",
-                difficulty: "high",
-                canDo: "Housing specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "Rapid Rehousing",
-                category: "housing",
-                description: "Short-term rental assistance and services (11 clients served in last 6 months)",
-                provider: "RRH Providers",
-                difficulty: "high",
-                canDo: "Housing specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "Section 8 Housing Choice Voucher",
-                category: "housing",
-                description: "Rental assistance vouchers for eligible families",
-                provider: "Housing Authority",
-                difficulty: "medium",
-                canDo: "Onsite volunteer or Housing specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "HUD-VASH Housing Voucher",
-                category: "veterans",
-                description: "Housing vouchers specifically for veterans",
-                provider: "VA and Housing Authority",
-                difficulty: "high",
-                canDo: "Veteran service specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "Housing Deposit and First Month Rent",
-                category: "housing",
-                description: "Financial assistance for move-in costs (7 clients served in last 6 months)",
-                provider: "Various Organizations",
-                difficulty: "high",
-                canDo: "Housing specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "Housing Recertification",
-                category: "housing",
-                description: "Annual recertification for housing programs",
-                provider: "Housing Authorities",
-                difficulty: "low",
-                canDo: "Housing specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "LIHEAP (Energy Assistance)",
-                category: "housing",
-                description: "Low Income Home Energy Assistance Program",
-                provider: "County Social Services",
-                difficulty: "low",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "CARE (Energy Rate Assistance)",
-                category: "housing",
-                description: "California Alternative Rate for Energy - reduced utility rates",
-                provider: "PG&E and other utilities",
-                difficulty: "low",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            
-            // Employment
-            {
-                title: "Employment Support Services",
-                category: "employment",
-                description: "Career coaching, job readiness, resume prep, workplace conflict resolution (13 clients in last 6 months)",
-                provider: "Employment Specialists",
-                difficulty: "high",
-                canDo: "Employment support specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "Self-Sufficiency Program (UEO)",
-                category: "employment",
-                description: "Comprehensive program to achieve economic independence (29 clients in last 6 months)",
-                provider: "UEO",
-                difficulty: "high",
-                canDo: "SSP specialist",
-                location: "Onsite/Offsite"
-            },
-            
-            // Personal Documents
-            {
-                title: "Birth Certificate Application",
-                category: "personal-docs",
-                description: "Obtain certified copies of birth certificates",
-                provider: "Vital Records Office",
-                difficulty: "low",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "DMV ID Application Fee Waiver",
-                category: "personal-docs",
-                description: "Fee waiver for California ID cards for low-income individuals",
-                provider: "DMV",
-                difficulty: "low",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "Replacement Green Card Application",
-                category: "personal-docs",
-                description: "Replace lost or damaged Permanent Resident Cards",
-                provider: "USCIS",
-                difficulty: "medium",
-                canDo: "Immigration specialist",
-                location: "Onsite"
-            },
-            {
-                title: "Employment Authorization Application",
-                category: "personal-docs",
-                description: "Apply for work permits and employment authorization",
-                provider: "USCIS",
-                difficulty: "medium",
-                canDo: "Immigration specialist",
-                location: "Onsite"
-            },
-            {
-                title: "Naturalization Application",
-                category: "personal-docs",
-                description: "Apply for U.S. citizenship",
-                provider: "USCIS",
-                difficulty: "high",
-                canDo: "Immigration specialist",
-                location: "Onsite"
-            },
-            {
-                title: "Criminal Record Clearance",
-                category: "personal-docs",
-                description: "Clear criminal records or obtain certificates",
-                provider: "Court System",
-                difficulty: "medium",
-                canDo: "Legal specialist",
-                location: "Onsite"
-            },
-            
-            // Veteran Services
-            {
-                title: "DD214 Request",
-                category: "veterans",
-                description: "Obtain military discharge records",
-                provider: "National Archives",
-                difficulty: "low",
-                canDo: "Veteran service specialist",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "Discharge Upgrade",
-                category: "veterans",
-                description: "Apply to upgrade military discharge status",
-                provider: "Military Review Boards",
-                difficulty: "high",
-                canDo: "Veteran service specialist (refer out)",
-                location: "Refer out"
-            },
-            {
-                title: "Service-Connected Disability Application",
-                category: "veterans",
-                description: "Apply for VA disability benefits",
-                provider: "VA",
-                difficulty: "high",
-                canDo: "Veteran service specialist (refer out)",
-                location: "Refer out"
-            },
-            {
-                title: "VA Pension Application",
-                category: "veterans",
-                description: "Apply for VA pension benefits",
-                provider: "VA",
-                difficulty: "high",
-                canDo: "Veteran service specialist (refer out)",
-                location: "Refer out"
-            },
-            
-            // Other Services
-            {
-                title: "YMCA Membership Application",
-                category: "services",
-                description: "Reduced-cost gym and recreation center membership",
-                provider: "YMCA",
-                difficulty: "low",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "LifeLine Phone Service",
-                category: "services",
-                description: "Free phone service for low-income individuals",
-                provider: "Telecom Providers",
-                difficulty: "low",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "Mail Service (748 Mercy Street)",
-                category: "services",
-                description: "Mail holding and forwarding service",
-                provider: "Local Organization",
-                difficulty: "low",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "Shelter Referral",
-                category: "services",
-                description: "Emergency temporary shelter placement",
-                provider: "Homeless Services",
-                difficulty: "medium",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "Safe Parking Referral",
-                category: "services",
-                description: "Safe overnight parking for people living in vehicles",
-                provider: "Safe Parking Programs",
-                difficulty: "medium",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "Caltrain Clipper Card",
-                category: "services",
-                description: "Public transportation passes",
-                provider: "Caltrain",
-                difficulty: "low",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "UPLIFT Pass (VTA)",
-                category: "services",
-                description: "Universal Pass for Life Improvement From Transportation",
-                provider: "VTA",
-                difficulty: "low",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "Paratransit Pass (VTA ACCESS)",
-                category: "services",
-                description: "Specialized transportation for people with disabilities",
-                provider: "VTA",
-                difficulty: "medium",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "Disabled Person (DP) Parking Placard",
-                category: "services",
-                description: "Disability parking permits",
-                provider: "DMV",
-                difficulty: "low",
-                canDo: "Onsite volunteer",
-                location: "Onsite"
-            },
-            {
-                title: "Reasonable Accommodation Request",
-                category: "services",
-                description: "Request accommodations for disabilities",
-                provider: "Various Organizations",
-                difficulty: "medium",
-                canDo: "Disability specialist",
-                location: "Onsite"
-            },
-            {
-                title: "VI-SPDAT Assessment",
-                category: "services",
-                description: "Vulnerability Index - Service Prioritization Decision Assessment Tool",
-                provider: "Homeless Services",
-                difficulty: "medium",
-                canDo: "Trained assessor",
-                location: "Onsite"
-            },
-            {
-                title: "MyConnectSV",
-                category: "services",
-                description: "Technology access and digital literacy program",
-                provider: "MyConnectSV Team",
-                difficulty: "low",
-                canDo: "MyConnectSV team",
-                location: "Onsite/Offsite"
-            },
-            {
-                title: "Homelessness Prevention",
-                category: "housing",
-                description: "Rental assistance and ongoing support for housed clients",
-                provider: "HPS specialists",
-                difficulty: "high",
-                canDo: "HPS specialist",
-                location: "Onsite/Offsite"
-            }
-        ];
+    // State
+    let resources = [];
+    let filteredResources = [];
+    const categoryLabels = {};
+    let hasSubgroups = false; // true if any category defines groups
 
-        let filteredResources = [...resources];
-        
+        // Helpers
+        function capitalizeCategory(key) {
+            if (categoryLabels[key]) return categoryLabels[key];
+            if (!key) return '';
+            return key.charAt(0).toUpperCase() + key.slice(1).replace('-', ' ');
+        }
+
+        function flattenResources(data) {
+            const arr = [];
+            (data.categories || []).forEach(cat => {
+                categoryLabels[cat.key] = cat.label || capitalizeCategory(cat.key);
+
+                // Plain items at category root
+                (cat.items || []).forEach(item => {
+                    arr.push({ ...item, category: cat.key });
+                });
+
+                // Optional grouped items
+                if (Array.isArray(cat.groups)) {
+                    hasSubgroups = true;
+                    cat.groups.forEach(group => {
+                        (group.items || []).forEach(item => {
+                            arr.push({ ...item, category: cat.key, group: group.label });
+                        });
+                    });
+                }
+            });
+            return arr;
+        }
+
+        function renderFilters(data) {
+            const filtersEl = document.getElementById('filters');
+            filtersEl.querySelectorAll('.filter-btn[data-category]:not([data-category="all"])').forEach(el => el.remove());
+
+            (data.categories || []).forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.dataset.category = cat.key;
+                btn.textContent = cat.label || capitalizeCategory(cat.key);
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterResources();
+                });
+                filtersEl.appendChild(btn);
+            });
+        }
+
         function renderResources() {
             const grid = document.getElementById('resourcesGrid');
             const noResults = document.getElementById('noResults');
-            
+
             if (filteredResources.length === 0) {
                 grid.style.display = 'none';
                 noResults.style.display = 'block';
+                document.getElementById('filteredCount').textContent = '0';
                 return;
             }
-            
+
             grid.style.display = 'grid';
             noResults.style.display = 'none';
-            
-            grid.innerHTML = filteredResources.map(resource => `
+
+            const activeBtn = document.querySelector('.filter-btn.active');
+            const activeCategory = activeBtn ? activeBtn.dataset.category : 'all';
+            const groupMode = document.getElementById('groupBy').value;
+
+            // If grouping by subgroup and a single category is selected, section the grid by group label
+            if (groupMode === 'subgroup' && activeCategory !== 'all') {
+                const groups = new Map();
+                filteredResources.forEach(r => {
+                    const key = r.group || 'Other';
+                    if (!groups.has(key)) groups.set(key, []);
+                    groups.get(key).push(r);
+                });
+                const parts = [];
+                groups.forEach((items, label) => {
+                    parts.push(`<div class="group-header">${label}</div>`);
+                    parts.push(items.map(resource => renderCard(resource)).join(''));
+                });
+                grid.innerHTML = parts.join('');
+            } else {
+                grid.innerHTML = filteredResources.map(resource => renderCard(resource)).join('');
+            }
+
+            document.getElementById('filteredCount').textContent = String(filteredResources.length);
+        }
+
+        function renderCard(resource) {
+            return `
                 <div class="resource-card">
-                    <div class="resource-category">${resource.category.charAt(0).toUpperCase() + resource.category.slice(1).replace('-', ' ')}</div>
+                    <div class="resource-category">${capitalizeCategory(resource.category)}</div>
                     <h3 class="resource-title">${resource.title}</h3>
                     <p class="resource-description">${resource.description}</p>
                     <div class="resource-details">
@@ -680,41 +431,146 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
-            
-            document.getElementById('filteredCount').textContent = filteredResources.length;
+            `;
         }
-        
+
         function filterResources() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
-            
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            const activeBtn = document.querySelector('.filter-btn.active');
+            const activeCategory = activeBtn ? activeBtn.dataset.category : 'all';
+
             filteredResources = resources.filter(resource => {
-                const matchesSearch = resource.title.toLowerCase().includes(searchTerm) ||
-                                    resource.description.toLowerCase().includes(searchTerm) ||
-                                    resource.provider.toLowerCase().includes(searchTerm);
-                                    
+                const matchesSearch = !searchTerm ||
+                    resource.title.toLowerCase().includes(searchTerm) ||
+                    resource.description.toLowerCase().includes(searchTerm) ||
+                    resource.provider.toLowerCase().includes(searchTerm);
+
                 const matchesCategory = activeCategory === 'all' || resource.category === activeCategory;
-                
                 return matchesSearch && matchesCategory;
             });
-            
+            sortFiltered();
             renderResources();
         }
-        
-        // Event listeners
-        document.getElementById('searchInput').addEventListener('input', filterResources);
-        
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                filterResources();
+
+        function sortFiltered() {
+            const by = document.getElementById('sortBy').value;
+            const order = document.getElementById('sortOrder').value;
+            const dir = order === 'desc' ? -1 : 1;
+
+            const diffRank = { low: 1, medium: 2, high: 3 };
+            filteredResources.sort((a, b) => {
+                let av, bv;
+                switch (by) {
+                    case 'difficulty':
+                        av = diffRank[(a.difficulty || '').toLowerCase()] || 999;
+                        bv = diffRank[(b.difficulty || '').toLowerCase()] || 999;
+                        break;
+                    case 'provider':
+                        av = (a.provider || '').toLowerCase();
+                        bv = (b.provider || '').toLowerCase();
+                        break;
+                    case 'title':
+                    default:
+                        av = (a.title || '').toLowerCase();
+                        bv = (b.title || '').toLowerCase();
+                }
+                if (av < bv) return -1 * dir;
+                if (av > bv) return 1 * dir;
+                return 0;
             });
+        }
+
+        function showSchemaIssues(issues) {
+            const box = document.getElementById('schemaErrors');
+            if (!issues || issues.length === 0) {
+                box.style.display = 'none';
+                box.innerHTML = '';
+                return;
+            }
+            box.style.display = 'block';
+            box.innerHTML = `<h4>Data issues detected:</h4><ul>` + issues.map(i => `<li>${i}</li>`).join('') + `</ul>`;
+        }
+
+        function validateData(data) {
+            const issues = [];
+            if (!data || !Array.isArray(data.categories)) {
+                issues.push('Missing "categories" array.');
+                return { issues };
+            }
+            data.categories.forEach((cat, ci) => {
+                if (!cat || typeof cat.key !== 'string') issues.push(`Category[${ci}] is missing a string "key".`);
+                if (!cat || typeof cat.label !== 'string') issues.push(`Category[${ci}] is missing a string "label".`);
+                const hasItems = Array.isArray(cat.items) && cat.items.length > 0;
+                const hasGroups = Array.isArray(cat.groups) && cat.groups.length > 0;
+                if (!hasItems && !hasGroups) issues.push(`Category "${cat.label || cat.key || ci}" has no items or groups.`);
+
+                const checkItem = (item, ii, where) => {
+                    if (!item || typeof item.title !== 'string') issues.push(`${where}[${ii}] missing string "title".`);
+                    if (!item || typeof item.description !== 'string') issues.push(`${where}[${ii}] missing string "description".`);
+                    if (!item || typeof item.provider !== 'string') issues.push(`${where}[${ii}] missing string "provider".`);
+                    if (!item || typeof item.difficulty !== 'string') issues.push(`${where}[${ii}] missing string "difficulty".`);
+                    const d = (item.difficulty || '').toLowerCase();
+                    if (d && !['low','medium','high'].includes(d)) issues.push(`${where}[${ii}] difficulty should be low|medium|high.`);
+                };
+
+                (cat.items || []).forEach((it, ii) => checkItem(it, ii, `Category ${cat.key} item`));
+                (cat.groups || []).forEach((grp, gi) => {
+                    if (!grp || typeof grp.label !== 'string') issues.push(`Category ${cat.key} group[${gi}] missing string "label".`);
+                    (grp && grp.items || []).forEach((it, ii) => checkItem(it, ii, `Category ${cat.key} group ${grp.label} item`));
+                });
+            });
+            return { issues };
+        }
+
+        async function loadResources() {
+            const noResults = document.getElementById('noResults');
+            try {
+                const res = await fetch('resources.json', { cache: 'no-store' });
+                if (!res.ok) throw new Error(`Failed to fetch resources.json: ${res.status}`);
+                const data = await res.json();
+
+                // Validate and report
+                const { issues } = validateData(data);
+                showSchemaIssues(issues);
+
+                renderFilters(data);
+                resources = flattenResources(data);
+                filteredResources = [...resources];
+                document.getElementById('totalResources').textContent = String(resources.length);
+
+                const groupWrap = document.getElementById('groupByWrapper');
+                if (hasSubgroups) {
+                    groupWrap.style.display = '';
+                } else {
+                    groupWrap.style.display = 'none';
+                }
+
+                sortFiltered();
+                renderResources();
+            } catch (err) {
+                console.error(err);
+                noResults.style.display = 'block';
+                noResults.textContent = 'Failed to load resources. If running locally, start a local server (see README) and reload.';
+                document.getElementById('filteredCount').textContent = '0';
+                document.getElementById('totalResources').textContent = '0';
+                showSchemaIssues([String(err.message || err)]);
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterResources);
+
+        document.querySelector('.filter-btn[data-category="all"]').addEventListener('click', (e) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            filterResources();
         });
-        
-        // Initial render
-        renderResources();
+
+        document.getElementById('sortBy').addEventListener('change', () => { sortFiltered(); renderResources(); });
+        document.getElementById('sortOrder').addEventListener('change', () => { sortFiltered(); renderResources(); });
+        document.getElementById('groupBy').addEventListener('change', () => renderResources());
+
+        // Boot
+        loadResources();
     </script>
 </body>
 </html>
