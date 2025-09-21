@@ -43,7 +43,7 @@ Because the page fetches `resources.json`, you need to serve it from a local ser
 
 Pick any static server. A couple of options:
 
-Using Python 3 (macOS comes with it):
+Using Python 3:
 
 ```bash
 python3 -m http.server 8000
@@ -105,5 +105,3 @@ The UI provides Sort by (Title, Difficulty, Provider) and Order (Ascending/Desce
 ## Data validation
 
 On load, a lightweight schema validator checks for common data issues (missing fields, invalid difficulty values, empty categories). Any problems are shown in a red notice on the page so you can quickly fix `resources.json`.
-
-
