@@ -15,15 +15,27 @@ Top-level shape:
   "categories": [
     {
       "key": "benefits",          // machine key used for filtering
-      "label": "Benefits",         // display label for the filter button
+      "label": "Benefits",         // default display label (English)
+      "label_es": "Beneficios",    // optional Spanish label (if present, shown when Spanish is active)
+      "label_zh": "福利",           // optional Mandarin label (if present)
       "items": [
         {
-          "title": "...",
+          "title": "...",           // default English fields
+          "title_es": "...",        // optional Spanish
+          "title_zh": "...",        // optional Mandarin
           "description": "...",
+          "description_es": "...",
+          "description_zh": "...",
           "provider": "...",
+          "provider_es": "...",
+          "provider_zh": "...",
           "difficulty": "low|medium|high",
           "canDo": "...",
-          "location": "Onsite/Offsite|Onsite|Offsite|Refer out"
+          "canDo_es": "...",
+          "canDo_zh": "...",
+          "location": "Onsite/Offsite|Onsite|Offsite|Refer out",
+          "location_es": "...",
+          "location_zh": "..."
         }
       ]
     }
@@ -36,6 +48,9 @@ Notes:
 - Add new categories by appending to `categories` with a unique `key` and a human-friendly `label`.
 - Add new resources by appending objects to a category's `items` array.
 - The UI builds filter buttons dynamically from categories and shows counts automatically.
+- To localize, add `label_es`/`label_zh` on categories and per-item translated fields like `title_es`, `description_es`, `provider_es`, `canDo_es`, `location_es` (and `_zh` variants). If a translation is missing, the app gracefully falls back to the default field.
+
+You can also localize group labels when using `groups` by setting `label_es` and/or `label_zh` on each group object.
 
 ## Running locally
 
@@ -74,6 +89,8 @@ You can optionally group items inside a category by adding a `groups` array alon
   "groups": [
     {
       "label": "Subsidy Programs",
+      "label_es": "Programas de subsidio",
+      "label_zh": "补贴项目",
       "items": [
         { "title": "Section 8 Housing Choice Voucher", "description": "...", "provider": "Housing Authority", "difficulty": "medium", "canDo": "Onsite volunteer or Housing specialist", "location": "Onsite/Offsite" },
         { "title": "HUD-VASH Housing Voucher", "description": "...", "provider": "VA and Housing Authority", "difficulty": "high", "canDo": "Veteran service specialist", "location": "Onsite/Offsite" }
@@ -81,6 +98,8 @@ You can optionally group items inside a category by adding a `groups` array alon
     },
     {
       "label": "Utilities",
+      "label_es": "Servicios públicos",
+      "label_zh": "公共事业",
       "items": [
         { "title": "LIHEAP (Energy Assistance)", "description": "...", "provider": "County Social Services", "difficulty": "low", "canDo": "Onsite volunteer", "location": "Onsite" },
         { "title": "CARE (Energy Rate Assistance)", "description": "...", "provider": "PG&E and other utilities", "difficulty": "low", "canDo": "Onsite volunteer", "location": "Onsite" }

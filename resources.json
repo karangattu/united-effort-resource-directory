@@ -3,14 +3,26 @@
     {
       "key": "benefits",
       "label": "Benefits",
+      "label_es": "Beneficios",
+      "label_zh": "福利",
       "items": [
         {
           "title": "CalFresh (Food Stamps)",
+          "title_es": "CalFresh (Estampillas de comida)",
+          "title_zh": "CalFresh（食品券）",
           "description": "Monthly food assistance for eligible individuals and families",
+          "description_es": "Asistencia alimentaria mensual para personas y familias elegibles",
+          "description_zh": "为符合条件的个人和家庭提供每月食品援助",
           "provider": "County Social Services",
+          "provider_es": "Servicios Sociales del Condado",
+          "provider_zh": "县社会服务机构",
           "difficulty": "low",
           "canDo": "Benefit application volunteer or specialist",
-          "location": "Onsite/Offsite"
+          "canDo_es": "Voluntario o especialista en solicitudes de beneficios",
+          "canDo_zh": "福利申请志愿者或专员",
+          "location": "Onsite/Offsite",
+          "location_es": "En sitio/Fuera de sitio",
+          "location_zh": "现场/非现场"
         },
         {
           "title": "CalWORKs (Cash Aid)",
@@ -65,14 +77,26 @@
     {
       "key": "housing",
       "label": "Housing",
+      "label_es": "Vivienda",
+      "label_zh": "住房",
       "items": [
         {
           "title": "Affordable Housing Waitlist Application",
+          "title_es": "Solicitud de lista de espera de vivienda asequible",
+          "title_zh": "经济适用房候补名单申请",
           "description": "Apply for affordable housing programs (275 applications in last 6 months)",
+          "description_es": "Solicita programas de vivienda asequible (275 solicitudes en los últimos 6 meses)",
+          "description_zh": "申请经济适用房项目（过去6个月有275份申请）",
           "provider": "Various Housing Authorities",
+          "provider_es": "Varias autoridades de vivienda",
+          "provider_zh": "多家住房管理机构",
           "difficulty": "medium",
           "canDo": "Onsite volunteer or Housing specialist",
-          "location": "Onsite/Offsite"
+          "canDo_es": "Voluntario en sitio o especialista en vivienda",
+          "canDo_zh": "现场志愿者或住房专员",
+          "location": "Onsite/Offsite",
+          "location_es": "En sitio/Fuera de sitio",
+          "location_zh": "现场/非现场"
         },
         {
           "title": "Home Sharing Programs",
@@ -151,6 +175,8 @@
     {
       "key": "employment",
       "label": "Employment",
+      "label_es": "Empleo",
+      "label_zh": "就业",
       "items": [
         {
           "title": "Employment Support Services",
@@ -173,6 +199,8 @@
     {
       "key": "personal-docs",
       "label": "Personal Documents",
+      "label_es": "Documentos Personales",
+      "label_zh": "个人证件",
       "items": [
         {
           "title": "Birth Certificate Application",
@@ -227,6 +255,8 @@
     {
       "key": "veterans",
       "label": "Veterans",
+      "label_es": "Veteranos",
+      "label_zh": "退伍军人",
       "items": [
         {
           "title": "HUD-VASH Housing Voucher",
@@ -273,6 +303,8 @@
     {
       "key": "services",
       "label": "Other Services",
+      "label_es": "Otros Servicios",
+      "label_zh": "其他服务",
       "items": [
         {
           "title": "YMCA Membership Application",
