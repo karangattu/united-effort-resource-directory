@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The United Effort Resource Directory</title>
+    <title>The United Effort Org</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,57 +23,140 @@
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
         </div>
         <header>
-            <h1 id="titleText">The United Effort Resource Directory</h1>
-            <p class="subtitle" id="subtitleText">Find the support services you need</p>
+            <h1 id="titleText">United Effort Benefit Navigator</h1>
+            <p class="subtitle" id="subtitleText">Let's help you find the right assistance</p>
         </header>
         
-        <div class="stats">
-            <div class="stat-item">
-                <span class="stat-number" id="totalResources">0</span>
-                <span class="stat-label" id="totalResourcesLabel">Total Resources</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number" id="filteredCount">0</span>
-                <span class="stat-label" id="currentlyShowingLabel">Currently Showing</span>
+        <!-- Step 1: GA Awareness -->
+        <div class="questionnaire-step active" id="step1">
+            <div class="question-card">
+                <h2>General Assistance (GA) Eligibility</h2>
+                <p class="question-text">Are you aware that you may qualify for General Assistance (GA)?</p>
+                <p class="help-text">GA provides monthly cash assistance to help with basic needs.</p>
+                
+                <div class="answer-buttons">
+                    <button class="answer-btn yes-btn" onclick="handleGAResponse(true)">
+                        ✅ Yes, I know about GA
+                    </button>
+                    <button class="answer-btn no-btn" onclick="handleGAResponse(false)">
+                        ❓ No, tell me more
+                    </button>
+                </div>
             </div>
         </div>
-        
-        <div class="search-container">
-            <input type="text" class="search-box" id="searchInput" placeholder="Search for benefits, housing, employment, or other services...">
-            <div class="filters" id="filters">
-                <button class="filter-btn active" id="filterAllBtn" data-category="all">All Services</button>
-                <!-- Dynamic category buttons will be injected here -->
+
+        <!-- Step 2: Benefits Eligibility Check -->
+        <div class="questionnaire-step" id="step2">
+            <div class="question-card">
+                <h2>Check Your Benefits Eligibility</h2>
+                <p class="question-text">Let's check what benefits you may be eligible for!</p>
+                
+                <div class="info-box">
+                    <p>Please visit our benefits eligibility checker to see all the assistance programs you might qualify for:</p>
+                    <a href="https://www.theunitedeffort.org/benefits-eligibility/" class="external-link-btn" target="_blank">
+                        🔍 Check My Benefits Eligibility
+                    </a>
+                </div>
+                
+                <div class="navigation-buttons">
+                    <button class="nav-btn back-btn" onclick="goToStep(1)">← Back</button>
+                    <button class="nav-btn continue-btn" onclick="goToStep(3)">I've checked my eligibility →</button>
+                </div>
             </div>
-            <div class="controls">
-                <label id="sortByLabel">
-                    Sort by:
-                    <select id="sortBy" aria-label="Sort by">
-                        <option value="title">Title</option>
-                        <option value="difficulty">Difficulty</option>
-                        <option value="provider">Provider</option>
-                    </select>
-                </label>
-                <label id="orderLabel">
-                    Order:
-                    <select id="sortOrder" aria-label="Sort order">
-                        <option value="asc">Ascending</option>
-                        <option value="desc">Descending</option>
-                    </select>
-                </label>
-                <label id="groupByWrapper" style="display:none">
-                    <span id="groupLabel">Group:</span>
-                    <select id="groupBy" aria-label="Group by">
-                        <option value="none">None</option>
-                        <option value="subgroup">Subgroup</option>
-                    </select>
-                </label>
-            </div>
-            <div class="schema-errors" id="schemaErrors" style="display:none"></div>
         </div>
-        
-        <div class="resources-grid" id="resourcesGrid"></div>
-        
-        <div class="no-results" id="noResults" style="display: none;">No resources found matching your search criteria.</div>
+
+        <!-- Step 3: Housing Status -->
+        <div class="questionnaire-step" id="step3">
+            <div class="question-card">
+                <h2>Housing Assistance Options</h2>
+                <p class="question-text">What is your current housing situation?</p>
+                
+                <div class="answer-buttons">
+                    <button class="answer-btn housed-btn" onclick="handleHousingStatus('housed')">
+                        🏠 I have housing (housed)
+                    </button>
+                    <button class="answer-btn unhoused-btn" onclick="handleHousingStatus('unhoused')">
+                        🏕️ I don't have housing (unhoused)
+                    </button>
+                </div>
+                
+                <div class="navigation-buttons">
+                    <button class="nav-btn back-btn" onclick="goToStep(1)">← Back to start</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Unhoused Assistance -->
+        <div class="questionnaire-step" id="step4-unhoused">
+            <div class="question-card">
+                <h2>Assistance for Unhoused Individuals</h2>
+                
+                <div class="assistance-info">
+                    <div class="benefit-box">
+                        <h3>🏠 Shelter Placement Exception</h3>
+                        <p>You can apply for a shelter placement requirements exception to receive an additional <strong>$193 per month</strong>.</p>
+                    </div>
+                    
+                    <div class="contact-box">
+                        <h3>📞 Get Help Now</h3>
+                        <p>Contact United Effort Organization to help you with your application:</p>
+                        <div class="contact-info">
+                            <p><strong>United Effort Organization</strong></p>
+                            <p>We can help guide you through the application process</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="navigation-buttons">
+                    <button class="nav-btn back-btn" onclick="goToStep(3)">← Back</button>
+                    <button class="nav-btn restart-btn" onclick="goToStep(1)">Start Over</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Housed Assistance -->
+        <div class="questionnaire-step" id="step4-housed">
+            <div class="question-card">
+                <h2>Housing Assistance for Housed Individuals</h2>
+                
+                <div class="assistance-info">
+                    <div class="benefit-box">
+                        <h3>🏡 Rent Assistance</h3>
+                        <p>You can apply for housing assistance of <strong>$50 for rent</strong>.</p>
+                    </div>
+                    
+                    <div class="benefit-box utilities-box">
+                        <h3>💡 Utility Assistance</h3>
+                        <p class="question-text">Do you pay for utilities (electricity, gas, water)?</p>
+                        <div class="utility-buttons">
+                            <button class="utility-btn yes-utilities" onclick="showUtilityHelp(true)">
+                                ✅ Yes, I pay utilities
+                            </button>
+                            <button class="utility-btn no-utilities" onclick="showUtilityHelp(false)">
+                                ❌ No, utilities included
+                            </button>
+                        </div>
+                        <div class="utility-info" id="utilityInfo" style="display: none;">
+                            <p><strong>Great news!</strong> You can also apply for housing assistance to pay up to <strong>$193 per month</strong> for utilities.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-box">
+                        <h3>📞 Get Help with Applications</h3>
+                        <p>Contact United Effort Organization for assistance with your applications:</p>
+                        <div class="contact-info">
+                            <p><strong>United Effort Organization</strong></p>
+                            <p>We can help you apply for these benefits</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="navigation-buttons">
+                    <button class="nav-btn back-btn" onclick="goToStep(3)">← Back</button>
+                    <button class="nav-btn restart-btn" onclick="goToStep(1)">Start Over</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="app.js" defer></script>
