@@ -11,35 +11,34 @@
 </head>
 <body>
     <div class="container">
+        <a href="#mainContent" class="skip-link">Skip to questionnaire</a>
         <div class="topbar">
-            <div class="lang-switch">
-                <label for="langSelect" class="sr-only">Language</label>
-                <select id="langSelect" aria-label="Language">
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                    <option value="zh">中文</option>
-                </select>
+            <div class="brand">United Effort</div>
+            <div class="top-actions">
+                <div id="google_translate_element" class="translate-widget" aria-label="Translate this page"></div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle light / dark theme">🌙</button>
             </div>
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
         </div>
-        <header>
+        <header class="site-header">
             <h1 id="titleText">United Effort Benefit Navigator</h1>
-            <p class="subtitle" id="subtitleText">Let's help you find the right assistance</p>
+            <p class="subtitle" id="subtitleText">Answer a few quick questions to discover cash & housing assistance you may qualify for.</p>
+            <div id="stepIndicator" class="step-indicator" aria-live="polite">Step 1 of 4</div>
         </header>
+        <main id="mainContent" tabindex="-1">
         
         <!-- Step 1: GA Awareness -->
         <div class="questionnaire-step active" id="step1">
             <div class="question-card">
-                <h2>General Assistance (GA) Eligibility</h2>
-                <p class="question-text">Are you aware that you may qualify for General Assistance (GA)?</p>
-                <p class="help-text">GA provides monthly cash assistance to help with basic needs.</p>
+                <h2 class="step-title">General Assistance (GA) Awareness</h2>
+                <p class="question-text">Have you already been told or do you already know that you qualify for General Assistance (GA)?</p>
+                <p class="help-text">GA is a monthly cash benefit that can help cover essential living needs. Not sure? We'll help you check.</p>
                 
                 <div class="answer-buttons">
                     <button class="answer-btn yes-btn" onclick="handleGAResponse(true)">
-                        ✅ Yes, I know about GA
+                        ✅ Yes, I already know I qualify / am applying
                     </button>
                     <button class="answer-btn no-btn" onclick="handleGAResponse(false)">
-                        ❓ No, tell me more
+                        ❓ No / Not sure – show me how to check
                     </button>
                 </div>
             </div>
@@ -49,18 +48,18 @@
         <div class="questionnaire-step" id="step2">
             <div class="question-card">
                 <h2>Check Your Benefits Eligibility</h2>
-                <p class="question-text">Let's check what benefits you may be eligible for!</p>
+                <p class="question-text">Let’s quickly see which benefits (including GA) you might qualify for.</p>
                 
                 <div class="info-box">
-                    <p>Please visit our benefits eligibility checker to see all the assistance programs you might qualify for:</p>
+                    <p>Use our benefits checker tool. It only takes a moment and won’t submit any official application.</p>
                     <a href="https://www.theunitedeffort.org/benefits-eligibility/" class="external-link-btn" target="_blank">
-                        🔍 Check My Benefits Eligibility
+                        🔍 Open Benefits Eligibility Checker
                     </a>
                 </div>
                 
                 <div class="navigation-buttons">
                     <button class="nav-btn back-btn" onclick="goToStep(1)">← Back</button>
-                    <button class="nav-btn continue-btn" onclick="goToStep(3)">I've checked my eligibility →</button>
+                    <button class="nav-btn continue-btn" onclick="goToStep(3)">I’m done – continue →</button>
                 </div>
             </div>
         </div>
@@ -69,14 +68,14 @@
         <div class="questionnaire-step" id="step3">
             <div class="question-card">
                 <h2>Housing Assistance Options</h2>
-                <p class="question-text">What is your current housing situation?</p>
+                <p class="question-text">What is your current housing situation? Choose the option that best matches today.</p>
                 
                 <div class="answer-buttons">
                     <button class="answer-btn housed-btn" onclick="handleHousingStatus('housed')">
-                        🏠 I have housing (housed)
+                        🏠 I have stable housing
                     </button>
                     <button class="answer-btn unhoused-btn" onclick="handleHousingStatus('unhoused')">
-                        🏕️ I don't have housing (unhoused)
+                        🏕️ I do NOT have housing (unhoused)
                     </button>
                 </div>
                 
@@ -94,15 +93,27 @@
                 <div class="assistance-info">
                     <div class="benefit-box">
                         <h3>🏠 Shelter Placement Exception</h3>
-                        <p>You can apply for a shelter placement requirements exception to receive an additional <strong>$193 per month</strong>.</p>
+                        <p>You may request a <strong>shelter placement requirement exception</strong>. If approved, this can add up to <strong>$193 per month</strong> in benefits.</p>
+                        <ul class="checklist">
+                            <li>Not currently placed in a shelter</li>
+                            <li>Actively seeking safe placement</li>
+                            <li>Need help navigating the process</li>
+                        </ul>
                     </div>
                     
                     <div class="contact-box">
                         <h3>📞 Get Help Now</h3>
-                        <p>Contact United Effort Organization to help you with your application:</p>
+                        <p>We can walk you through each step and help you request the exception.</p>
                         <div class="contact-info">
                             <p><strong>United Effort Organization</strong></p>
-                            <p>We can help guide you through the application process</p>
+                            <p><a href="mailto:help@theunitedeffort.org">help@theunitedeffort.org</a></p>
+                            <p><a href="tel:+16502090850">+1 (650) 209-0850</a></p>
+                            <address>
+                                The United Effort Organization, Inc.<br>
+                                748 Mercy St<br>
+                                Mountain View, CA 94041
+                            </address>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -122,31 +133,38 @@
                 <div class="assistance-info">
                     <div class="benefit-box">
                         <h3>🏡 Rent Assistance</h3>
-                        <p>You can apply for housing assistance of <strong>$50 for rent</strong>.</p>
+                        <p>You may qualify for <strong>$50 monthly rent assistance</strong>. This can supplement other benefits you receive.</p>
                     </div>
                     
                     <div class="benefit-box utilities-box">
                         <h3>💡 Utility Assistance</h3>
-                        <p class="question-text">Do you pay for utilities (electricity, gas, water)?</p>
+                        <p class="question-text">Do you directly pay for utilities like electricity, gas, or water each month?</p>
                         <div class="utility-buttons">
                             <button class="utility-btn yes-utilities" onclick="showUtilityHelp(true)">
-                                ✅ Yes, I pay utilities
+                                ✅ Yes – I pay utilities
                             </button>
                             <button class="utility-btn no-utilities" onclick="showUtilityHelp(false)">
-                                ❌ No, utilities included
+                                ❌ No – Included in rent
                             </button>
                         </div>
                         <div class="utility-info" id="utilityInfo" style="display: none;">
-                            <p><strong>Great news!</strong> You can also apply for housing assistance to pay up to <strong>$193 per month</strong> for utilities.</p>
+                            <p><strong>Great news!</strong> You may also request up to <strong>$193 per month</strong> toward utilities (if eligible).</p>
                         </div>
                     </div>
                     
                     <div class="contact-box">
                         <h3>📞 Get Help with Applications</h3>
-                        <p>Contact United Effort Organization for assistance with your applications:</p>
-                        <div class="contact-info">
+                        <p>Need help applying? We’re preparing guided support resources and can assist you directly.</p>
+                        <div class="contact-info" aria-label="Contact information">
                             <p><strong>United Effort Organization</strong></p>
-                            <p>We can help you apply for these benefits</p>
+                            <p><a href="mailto:help@theunitedeffort.org">help@theunitedeffort.org</a></p>
+                            <p><a href="tel:+16502090850">+1 (650) 209-0850</a></p>
+                            <address>
+                                The United Effort Organization, Inc.<br>
+                                748 Mercy St<br>
+                                Mountain View, CA 94041
+                            </address>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -157,8 +175,20 @@
                 </div>
             </div>
         </div>
+        </main>
     </div>
 
     <script src="app.js" defer></script>
+    <script>
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'en,es,zh-CN,vi',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
 </body>
 </html>

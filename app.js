@@ -31,6 +31,27 @@ function t(path) {
   return obj ?? path;
 }
 
+// Utility: update step indicator text
+function updateStepIndicator() {
+    const indicator = document.getElementById('stepIndicator');
+    if (!indicator) return;
+    // Map step ids to a linear sequence (4 total logical steps)
+    // Steps: 1 (awareness), 2 (eligibility checker), 3 (housing choice), 4 (result)
+    let logicalStep = 1;
+    if (String(currentStep).startsWith('4')) logicalStep = 4; else logicalStep = Number(currentStep) || 1;
+    indicator.textContent = `Step ${logicalStep} of 4`;
+}
+
+// Focus helper for accessibility
+function focusFirstHeading(stepEl) {
+    if (!stepEl) return;
+    const h2 = stepEl.querySelector('h2, .step-title');
+    if (h2) {
+        h2.setAttribute('tabindex', '-1');
+        h2.focus({ preventScroll: true });
+    }
+}
+
 // Questionnaire Functions
 function handleGAResponse(knowsGA) {
     userResponses.knowsAboutGA = knowsGA;
@@ -77,9 +98,10 @@ function goToStep(stepNumber) {
     if (targetStep) {
         targetStep.classList.add('active');
         currentStep = stepNumber;
-        
-        // Scroll to top smoothly
+        updateStepIndicator();
+        // Scroll then focus for screen readers
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => focusFirstHeading(targetStep), 220);
     }
 }
 
@@ -134,6 +156,7 @@ window.addEventListener('DOMContentLoaded', () => {
     initTheme();
     applyStaticTranslations();
     
-    // Start with step 1
+    // Start with step 1 and setup indicator
+    updateStepIndicator();
     goToStep(1);
 });

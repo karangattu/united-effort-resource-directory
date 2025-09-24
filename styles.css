@@ -99,6 +99,54 @@ body {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
+/* Accessibility / utility */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  background: #111827;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  z-index: 999;
+}
+.skip-link:focus {
+  left: 16px;
+  top: 16px;
+  outline: 2px solid var(--brand-accent);
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: .5px;
+  color: var(--white);
+  text-transform: uppercase;
+  background: linear-gradient(135deg,var(--brand-primary),var(--brand-accent));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.top-actions { display: flex; align-items: center; gap: 14px; }
+.translate-widget select { border-radius: 6px !important; }
+
+.site-header { text-align: center; margin-bottom: 10px; }
+.intro-points { list-style: none; margin: 18px auto 8px; padding: 0; max-width: 760px; display: grid; gap: 6px; }
+.intro-points li { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 8px 14px; border-radius: 10px; font-size: .95rem; color: var(--text-primary); }
+
+.step-indicator { margin: 18px auto 0; font-weight: 600; font-size: .95rem; color: var(--white); background: rgba(255,255,255,.12); padding: 6px 14px; width: fit-content; border-radius: 999px; backdrop-filter: blur(6px); }
+
+.checklist { margin: 12px 0 4px 0; padding-left: 18px; }
+.checklist li { margin: 4px 0; position: relative; color: var(--text-primary); }
+.checklist li::marker { color: var(--brand-primary); }
+
+.disclaimer { max-width: 880px; margin: 40px auto 70px; background: var(--card-bg); padding: 32px 34px; border-radius: 18px; border: 1px solid var(--glass-border); backdrop-filter: blur(8px); }
+.disclaimer h2 { margin: 0 0 14px; font-size: 1.3rem; background: linear-gradient(135deg,var(--brand-primary),var(--brand-accent)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+.disclaimer ul { margin: 0; padding-left: 20px; }
+.disclaimer li { margin: 6px 0; color: var(--text-secondary); }
+
 /* Questionnaire Styles */
 .questionnaire-step {
   display: none;
