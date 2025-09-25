@@ -105,31 +105,13 @@ function goToStep(stepNumber) {
     }
 }
 
-// Theme and Language Functions
+// Language Helpers
 function applyStaticTranslations() {
     const titleEl = document.getElementById('titleText');
     const subEl = document.getElementById('subtitleText');
 
     if (titleEl) titleEl.textContent = t('title');
     if (subEl) subEl.textContent = t('subtitle');
-}
-
-function applyTheme(theme) {
-    const body = document.body;
-    if (theme === 'dark') {
-        body.classList.add('theme-dark');
-        document.getElementById('themeToggle').textContent = '☀️';
-    } else {
-        body.classList.remove('theme-dark');
-        document.getElementById('themeToggle').textContent = '🌙';
-    }
-}
-
-function initTheme() {
-    const saved = localStorage.getItem('ued-theme');
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = saved || (prefersDark ? 'dark' : 'light');
-    applyTheme(theme);
 }
 
 // Initialize Application
@@ -145,15 +127,7 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Theme toggle
-    document.getElementById('themeToggle').addEventListener('click', () => {
-        const isDark = document.body.classList.toggle('theme-dark');
-        localStorage.setItem('ued-theme', isDark ? 'dark' : 'light');
-        document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
-    });
-
-    // Initialize theme and translations
-    initTheme();
+    // Initialize translations
     applyStaticTranslations();
     
     // Start with step 1 and setup indicator
