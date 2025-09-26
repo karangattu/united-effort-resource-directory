@@ -42,6 +42,14 @@ function updateStepIndicator() {
     indicator.textContent = `Step ${logicalStep} of 4`;
 }
 
+function adjustHeaderForStep(stepNumber) {
+    const headerEl = document.querySelector('.site-header');
+    const isIntroStep = stepNumber === 1 || stepNumber === '1';
+    if (headerEl) {
+        headerEl.classList.toggle('compact', !isIntroStep);
+    }
+}
+
 // Focus helper for accessibility
 function focusFirstHeading(stepEl) {
     if (!stepEl) return;
@@ -99,6 +107,7 @@ function goToStep(stepNumber) {
         targetStep.classList.add('active');
         currentStep = stepNumber;
         updateStepIndicator();
+        adjustHeaderForStep(stepNumber);
         // Scroll then focus for screen readers
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setTimeout(() => focusFirstHeading(targetStep), 220);

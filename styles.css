@@ -424,6 +424,50 @@ body {
   .utility-btn {
     min-width: auto;
   }
+
+  .site-header {
+    text-align: left;
+    padding: 6px 0 0;
+    margin-bottom: 14px;
+  }
+
+  .site-header h1 {
+    font-size: 1.55rem;
+    line-height: 1.25;
+  }
+
+  .site-header .subtitle {
+    font-size: 1rem;
+    line-height: 1.45;
+    margin-top: 4px;
+  }
+
+  .site-header.compact {
+    position: sticky;
+    top: 12px;
+    background: rgba(248, 247, 255, 0.94);
+    backdrop-filter: blur(16px);
+    padding: 10px 12px;
+    margin: 0 0 14px;
+    border-radius: 14px;
+    box-shadow: 0 12px 24px rgba(39, 33, 90, 0.12);
+    z-index: 40;
+  }
+
+  .site-header.compact h1 {
+    font-size: 1.28rem;
+  }
+
+  .site-header.compact .subtitle {
+    display: none;
+  }
+
+  #stepIndicator {
+    margin: 10px 0 0;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
 header {
   text-align: center;
   margin-bottom: 30px;
