@@ -1,8 +1,90 @@
 # United Effort Resource Directory
 
-An interactive web directory of social services and resources. Find benefits, housing assistance, employment support, veterans' services, and other essential community resources.
+An interactive web application providing two key services:
 
-## Editing resources (no code changes required)
+1. **Benefit Navigator** - A guided questionnaire that helps users discover General Assistance (GA) and housing benefits they may qualify for
+2. **Resource Directory** - A searchable directory of social services and community resources
+
+Both components are fully JSON-driven, making them easy to maintain without coding knowledge.
+
+---
+
+## 🎯 Benefit Navigator (Questionnaire)
+
+### Overview
+
+The Benefit Navigator is an interactive questionnaire that guides users through a series of questions to determine their eligibility for:
+
+- General Assistance (GA) cash benefits
+- Housing assistance programs
+- Utility assistance
+- Shelter placement exceptions
+
+### Key Features
+
+- ✅ **Mobile-optimized** with responsive header that compacts during navigation
+- ✅ **JSON-driven** - all content and logic in `questionnaire.json`
+- ✅ **Multilingual** ready with Google Translate integration
+- ✅ **Dynamic rendering** - no hardcoded questions in HTML
+- ✅ **Non-technical maintenance** - edit questions without touching code
+
+### Editing the questionnaire (no code changes required)
+
+All questionnaire content lives in `questionnaire.json`. Update this file to:
+
+- Add or edit questions
+- Change answer options
+- Modify navigation flow
+- Update benefits information
+- Change contact details
+
+📚 **For detailed guidance**, see `QUESTIONNAIRE_GUIDE.md` - a comprehensive guide for non-technical users.
+
+### Questionnaire JSON structure
+
+```json
+{
+  "steps": {
+    "1": {
+      "id": "1",
+      "type": "choice",
+      "title": "Question Title",
+      "questionText": "Your question text here",
+      "helpText": "Optional help text",
+      "answers": [
+        {
+          "text": "Answer option",
+          "value": "yes",
+          "nextStep": "2",
+          "cssClass": "yes-btn"
+        }
+      ]
+    }
+  },
+  "settings": {
+    "startStep": "1",
+    "totalSteps": 4
+  }
+}
+```
+
+**Step Types:**
+
+- `choice` - Multiple choice questions
+- `info` - Informational pages with external links
+- `result` - Final pages showing benefits and contact info
+
+For complete documentation, see `QUESTIONNAIRE_GUIDE.md`.
+
+---
+
+## 📚 Resource Directory
+
+### About the Resource Directory
+
+A searchable, filterable directory of social services and community resources including benefits, housing, employment, veterans' services, and more.
+
+### Editing resources (no code changes required)
 
 All resources now live in `resources.json`. Update this file to add, edit, or remove items. The page loads it at runtime and renders everything dynamically.
 
@@ -52,9 +134,11 @@ Notes:
 
 You can also localize group labels when using `groups` by setting `label_es` and/or `label_zh` on each group object.
 
-## Running locally
+---
 
-Because the page fetches `resources.json`, you need to serve it from a local server (most browsers block file:// fetches).
+## 🚀 Running locally
+
+Because the application fetches JSON files (`questionnaire.json`), you need to serve it from a local server (most browsers block file:// fetches).
 
 Pick any static server. A couple of options:
 
@@ -73,8 +157,30 @@ npx serve . -l 8000
 Then open:
 
 ```text
-http://localhost:8000/index.html
+http://localhost:8000/index.html    # Benefit Navigator (questionnaire)
+http://localhost:8000/resources.html # Resource Directory
 ```
+
+---
+
+### How it works
+
+**Benefit Navigator:**
+
+1. Page loads with loading message
+2. `app.js` fetches `questionnaire.json`
+3. First step renders dynamically
+4. User interactions trigger navigation
+5. Each step renders on-demand from JSON
+
+## 🌐 Internationalization
+
+Both components support multiple languages:
+
+- **Benefit Navigator**: Uses Google Translate widget for on-page translation
+- **Resource Directory**: Supports built-in translations via `_es` and `_zh` suffixed fields
+
+---
 
 ## Grouping and sorting
 
@@ -152,10 +258,10 @@ Notes:
 - The Group control appears only when the selected category has `groups`.
 - You can mix `items` at the category root and `groups`.
 
-### Sorting controls
+---
 
-The UI provides Sort by (Title, Difficulty, Provider) and Order (Ascending/Descending). Difficulty is ordered as `low < medium < high`.
+### Non-Technical Users
 
-## Data validation
-
-On load, a lightweight schema validator checks for common data issues (missing fields, invalid difficulty values, empty categories). Any problems are shown in a red notice on the page so you can quickly fix `resources.json`.
+1. Edit `questionnaire.json` to update the benefit navigator
+2. Refer to `QUESTIONNAIRE_GUIDE.md` for detailed instructions
+3. Test your changes locally before deploying
