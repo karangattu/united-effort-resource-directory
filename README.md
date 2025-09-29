@@ -14,15 +14,15 @@ Top-level shape:
 {
   "categories": [
     {
-      "key": "benefits",          // machine key used for filtering
-      "label": "Benefits",         // default display label (English)
-      "label_es": "Beneficios",    // optional Spanish label (if present, shown when Spanish is active)
-      "label_zh": "福利",           // optional Mandarin label (if present)
+      "key": "benefits", // machine key used for filtering
+      "label": "Benefits", // default display label (English)
+      "label_es": "Beneficios", // optional Spanish label (if present, shown when Spanish is active)
+      "label_zh": "福利", // optional Mandarin label (if present)
       "items": [
         {
-          "title": "...",           // default English fields
-          "title_es": "...",        // optional Spanish
-          "title_zh": "...",        // optional Mandarin
+          "title": "...", // default English fields
+          "title_es": "...", // optional Spanish
+          "title_zh": "...", // optional Mandarin
           "description": "...",
           "description_es": "...",
           "description_zh": "...",
@@ -92,8 +92,22 @@ You can optionally group items inside a category by adding a `groups` array alon
       "label_es": "Programas de subsidio",
       "label_zh": "补贴项目",
       "items": [
-        { "title": "Section 8 Housing Choice Voucher", "description": "...", "provider": "Housing Authority", "difficulty": "medium", "canDo": "Onsite volunteer or Housing specialist", "location": "Onsite/Offsite" },
-        { "title": "HUD-VASH Housing Voucher", "description": "...", "provider": "VA and Housing Authority", "difficulty": "high", "canDo": "Veteran service specialist", "location": "Onsite/Offsite" }
+        {
+          "title": "Section 8 Housing Choice Voucher",
+          "description": "...",
+          "provider": "Housing Authority",
+          "difficulty": "medium",
+          "canDo": "Onsite volunteer or Housing specialist",
+          "location": "Onsite/Offsite"
+        },
+        {
+          "title": "HUD-VASH Housing Voucher",
+          "description": "...",
+          "provider": "VA and Housing Authority",
+          "difficulty": "high",
+          "canDo": "Veteran service specialist",
+          "location": "Onsite/Offsite"
+        }
       ]
     },
     {
@@ -101,13 +115,34 @@ You can optionally group items inside a category by adding a `groups` array alon
       "label_es": "Servicios públicos",
       "label_zh": "公共事业",
       "items": [
-        { "title": "LIHEAP (Energy Assistance)", "description": "...", "provider": "County Social Services", "difficulty": "low", "canDo": "Onsite volunteer", "location": "Onsite" },
-        { "title": "CARE (Energy Rate Assistance)", "description": "...", "provider": "PG&E and other utilities", "difficulty": "low", "canDo": "Onsite volunteer", "location": "Onsite" }
+        {
+          "title": "LIHEAP (Energy Assistance)",
+          "description": "...",
+          "provider": "County Social Services",
+          "difficulty": "low",
+          "canDo": "Onsite volunteer",
+          "location": "Onsite"
+        },
+        {
+          "title": "CARE (Energy Rate Assistance)",
+          "description": "...",
+          "provider": "PG&E and other utilities",
+          "difficulty": "low",
+          "canDo": "Onsite volunteer",
+          "location": "Onsite"
+        }
       ]
     }
   ],
   "items": [
-    { "title": "Home Sharing Programs", "description": "...", "provider": "Local Housing Organizations", "difficulty": "medium", "canDo": "Onsite volunteer or Housing specialist", "location": "Onsite/Offsite" }
+    {
+      "title": "Home Sharing Programs",
+      "description": "...",
+      "provider": "Local Housing Organizations",
+      "difficulty": "medium",
+      "canDo": "Onsite volunteer or Housing specialist",
+      "location": "Onsite/Offsite"
+    }
   ]
 }
 ```

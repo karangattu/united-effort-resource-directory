@@ -1,24 +1,19 @@
-// GA Assistance Questionnaire Application
-let currentStep = 1;
-let userResponses = {
-    knowsAboutGA: null,
-    housingStatus: null,
-    paysUtilities: null
-};
+let questionnaireData = null;
+let currentStep = null;
+let userResponses = {};
 
-// i18n - Simplified for questionnaire
 const i18n = {
   en: {
-    title: 'The United Effort Resource Directory',
-    subtitle: 'Let\'s help you find the right assistance'
+    title: 'United Effort Benefit Navigator',
+    subtitle: 'Answer a few quick questions to discover cash & housing assistance you may qualify for.'
   },
   es: {
-    title: 'Directorio de Recursos de United Effort',
-    subtitle: 'Te ayudamos a encontrar la asistencia correcta'
+    title: 'Navegador de Beneficios de United Effort',
+    subtitle: 'Responda algunas preguntas rápidas para descubrir la asistencia en efectivo y vivienda para la que puede calificar.'
   },
   zh: {
-    title: '联合努力资源目录',
-    subtitle: '让我们帮您找到合适的援助'
+    title: '联合努力福利导航',
+    subtitle: '回答几个简单的问题，了解您可能有资格获得的现金和住房援助。'
   }
 };
 
@@ -31,15 +26,303 @@ function t(path) {
   return obj ?? path;
 }
 
-// Utility: update step indicator text
+async function loadQuestionnaire() {
+    try {
+        const response = await fetch('questionnaire.json');
+        if (!response.ok) throw new Error('Failed to load questionnaire');
+        questionnaireData = await response.json();
+        return true;
+    } catch (error) {
+        console.error('Error loading questionnaire:', error);
+        showError('Failed to load questionnaire. Please refresh the page.');
+        return false;
+    }
+}
+
+function showError(message) {
+    const container = document.getElementById('mainContent');
+    if (container) {
+        container.innerHTML = `
+            <div class="question-card" style="text-align: center; color: #b91c1c;">
+                <h2>⚠️ Error</h2>
+                <p>${message}</p>
+            </div>
+        `;
+    }
+}
+
+function renderStep(stepId) {
+    const stepData = questionnaireData.steps[stepId];
+    if (!stepData) {
+        console.error(`Step ${stepId} not found in questionnaire data`);
+        return;
+    }
+
+    const container = document.getElementById('mainContent');
+    container.innerHTML = '';
+
+    const stepDiv = document.createElement('div');
+    stepDiv.className = 'questionnaire-step active';
+    stepDiv.id = `step${stepId}`;
+
+    let html = `<div class="question-card">`;
+    html += `<h2 class="step-title">${stepData.title}</h2>`;
+
+    if (stepData.questionText) {
+        html += `<p class="question-text">${stepData.questionText}</p>`;
+    }
+
+    if (stepData.helpText) {
+        html += `<p class="help-text">${stepData.helpText}</p>`;
+    }
+
+    switch (stepData.type) {
+        case 'choice':
+            html += renderChoiceStep(stepData);
+            break;
+        case 'info':
+            html += renderInfoStep(stepData);
+            break;
+        case 'result':
+            html += renderResultStep(stepData);
+            break;
+    }
+
+    html += `</div>`;
+    stepDiv.innerHTML = html;
+    container.appendChild(stepDiv);
+
+    attachStepListeners(stepId, stepData);
+}
+
+function renderChoiceStep(stepData) {
+    let html = `<div class="answer-buttons">`;
+    
+    stepData.answers.forEach((answer, index) => {
+        const cssClass = answer.cssClass || 'answer-btn';
+        html += `
+            <button class="answer-btn ${cssClass}" data-answer-index="${index}">
+                ${answer.text}
+            </button>
+        `;
+    });
+    
+    html += `</div>`;
+
+    if (stepData.navigation) {
+        html += renderNavigation(stepData.navigation);
+    }
+
+    return html;
+}
+
+function renderInfoStep(stepData) {
+    let html = `<div class="info-box">`;
+    
+    if (stepData.infoBox) {
+        html += `<p>${stepData.infoBox.text}</p>`;
+        html += `
+            <a href="${stepData.infoBox.linkUrl}" 
+               class="external-link-btn" 
+               target="${stepData.infoBox.linkTarget || '_self'}"
+               rel="${stepData.infoBox.linkTarget === '_blank' ? 'noopener noreferrer' : ''}">
+                ${stepData.infoBox.linkText}
+            </a>
+        `;
+    }
+    
+    html += `</div>`;
+
+    if (stepData.navigation) {
+        html += renderNavigation(stepData.navigation);
+    }
+
+    return html;
+}
+
+function renderResultStep(stepData) {
+    let html = `<div class="assistance-info">`;
+
+    if (stepData.benefits && stepData.benefits.length > 0) {
+        stepData.benefits.forEach((benefit, index) => {
+            if (benefit.type === 'conditional') {
+                html += renderConditionalBenefit(benefit, index);
+            } else {
+                html += renderBenefit(benefit);
+            }
+        });
+    }
+
+    if (stepData.contact) {
+        html += renderContactBox(stepData.contact);
+    }
+
+    html += `</div>`;
+
+    if (stepData.navigation) {
+        html += renderNavigation(stepData.navigation);
+    }
+
+    return html;
+}
+
+function renderBenefit(benefit) {
+    let html = `<div class="benefit-box">`;
+    html += `<h3>${benefit.icon || ''} ${benefit.title}</h3>`;
+    html += `<p>${benefit.description}</p>`;
+    
+    if (benefit.checklist && benefit.checklist.length > 0) {
+        html += `<ul class="checklist">`;
+        benefit.checklist.forEach(item => {
+            html += `<li>${item}</li>`;
+        });
+        html += `</ul>`;
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
+function renderConditionalBenefit(benefit, index) {
+    let html = `<div class="benefit-box utilities-box">`;
+    html += `<h3>${benefit.icon || ''} ${benefit.title}</h3>`;
+    html += `<p class="question-text">${benefit.questionText}</p>`;
+    html += `<div class="utility-buttons">`;
+    
+    benefit.answers.forEach((answer, answerIndex) => {
+        const cssClass = answer.cssClass || 'utility-btn';
+        html += `
+            <button class="utility-btn ${cssClass}" data-benefit-index="${index}" data-answer-index="${answerIndex}">
+                ${answer.text}
+            </button>
+        `;
+    });
+    
+    html += `</div>`;
+    html += `<div class="utility-info" id="utilityInfo${index}" style="display: none;"></div>`;
+    html += `</div>`;
+    return html;
+}
+
+function renderContactBox(contact) {
+    let html = `<div class="contact-box">`;
+    html += `<h3>${contact.title}</h3>`;
+    html += `<p>${contact.description}</p>`;
+    html += `<div class="contact-info" aria-label="Contact information">`;
+    html += `<p><strong>${contact.organizationName}</strong></p>`;
+    html += `<p><a href="mailto:${contact.email}">${contact.email}</a></p>`;
+    html += `<p><a href="tel:${contact.phone.replace(/\s/g, '')}">${contact.phone}</a></p>`;
+    
+    if (contact.address) {
+        html += `<address>`;
+        if (contact.address.line1) html += `${contact.address.line1}<br>`;
+        if (contact.address.line2) html += `${contact.address.line2}<br>`;
+        if (contact.address.line3) html += `${contact.address.line3}`;
+        html += `</address>`;
+    }
+    
+    html += `</div></div>`;
+    return html;
+}
+
+function renderNavigation(nav) {
+    let html = `<div class="navigation-buttons">`;
+    
+    if (nav.showBack) {
+        html += `
+            <button class="nav-btn back-btn" data-back-step="${nav.backStep}">
+                ← Back
+            </button>
+        `;
+    }
+    
+    if (nav.showContinue) {
+        html += `
+            <button class="nav-btn continue-btn" data-continue-step="${nav.continueStep}">
+                ${nav.continueText || 'Continue →'}
+            </button>
+        `;
+    }
+    
+    if (nav.showRestart) {
+        html += `
+            <button class="nav-btn restart-btn" data-restart="true">
+                Start Over
+            </button>
+        `;
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
+function attachStepListeners(stepId, stepData) {
+    document.querySelectorAll('.answer-btn[data-answer-index]').forEach(button => {
+        button.addEventListener('click', () => {
+            const answerIndex = parseInt(button.dataset.answerIndex);
+            const answer = stepData.answers[answerIndex];
+            userResponses[stepId] = answer.value;
+            if (answer.nextStep) {
+                goToStep(answer.nextStep);
+            }
+        });
+    });
+
+    document.querySelectorAll('.utility-btn[data-benefit-index]').forEach(button => {
+        button.addEventListener('click', () => {
+            const benefitIndex = parseInt(button.dataset.benefitIndex);
+            const answerIndex = parseInt(button.dataset.answerIndex);
+            const benefit = stepData.benefits[benefitIndex];
+            const answer = benefit.answers[answerIndex];
+            
+            const infoDiv = document.getElementById(`utilityInfo${benefitIndex}`);
+            if (answer.showInfo && answer.infoText) {
+                infoDiv.innerHTML = `<p>${answer.infoText}</p>`;
+                infoDiv.style.display = 'block';
+                infoDiv.style.animation = 'fadeInUp 0.3s ease';
+            } else {
+                infoDiv.style.display = 'none';
+            }
+            
+            userResponses[`${stepId}_benefit_${benefitIndex}`] = answer.value;
+        });
+    });
+
+    document.querySelectorAll('.nav-btn[data-back-step]').forEach(button => {
+        button.addEventListener('click', () => {
+            goToStep(button.dataset.backStep);
+        });
+    });
+
+    document.querySelectorAll('.nav-btn[data-continue-step]').forEach(button => {
+        button.addEventListener('click', () => {
+            goToStep(button.dataset.continueStep);
+        });
+    });
+
+    document.querySelectorAll('.nav-btn[data-restart]').forEach(button => {
+        button.addEventListener('click', () => {
+            userResponses = {};
+            goToStep(questionnaireData.settings.startStep);
+        });
+    });
+}
+
 function updateStepIndicator() {
     const indicator = document.getElementById('stepIndicator');
-    if (!indicator) return;
-    // Map step ids to a linear sequence (4 total logical steps)
-    // Steps: 1 (awareness), 2 (eligibility checker), 3 (housing choice), 4 (result)
+    if (!indicator || !questionnaireData) return;
+    
+    const stepId = String(currentStep);
     let logicalStep = 1;
-    if (String(currentStep).startsWith('4')) logicalStep = 4; else logicalStep = Number(currentStep) || 1;
-    indicator.textContent = `Step ${logicalStep} of 4`;
+    
+    if (stepId.startsWith('4')) {
+        logicalStep = 4;
+    } else {
+        logicalStep = parseInt(stepId) || 1;
+    }
+    
+    const totalSteps = questionnaireData.settings.totalSteps || 4;
+    indicator.textContent = `Step ${logicalStep} of ${totalSteps}`;
 }
 
 function adjustHeaderForStep(stepNumber) {
@@ -50,7 +333,6 @@ function adjustHeaderForStep(stepNumber) {
     }
 }
 
-// Focus helper for accessibility
 function focusFirstHeading(stepEl) {
     if (!stepEl) return;
     const h2 = stepEl.querySelector('h2, .step-title');
@@ -60,61 +342,25 @@ function focusFirstHeading(stepEl) {
     }
 }
 
-// Questionnaire Functions
-function handleGAResponse(knowsGA) {
-    userResponses.knowsAboutGA = knowsGA;
-    
-    if (knowsGA) {
-        // User knows about GA, go to housing question
-        goToStep(3);
-    } else {
-        // User doesn't know about GA, show benefits checker
-        goToStep(2);
-    }
-}
-
-function handleHousingStatus(status) {
-    userResponses.housingStatus = status;
-    
-    if (status === 'unhoused') {
-        goToStep('4-unhoused');
-    } else if (status === 'housed') {
-        goToStep('4-housed');
-    }
-}
-
-function showUtilityHelp(paysUtilities) {
-    userResponses.paysUtilities = paysUtilities;
-    const utilityInfo = document.getElementById('utilityInfo');
-    
-    if (paysUtilities) {
-        utilityInfo.style.display = 'block';
-        utilityInfo.style.animation = 'fadeInUp 0.3s ease';
-    } else {
-        utilityInfo.style.display = 'none';
-    }
-}
-
 function goToStep(stepNumber) {
-    // Hide all steps
-    document.querySelectorAll('.questionnaire-step').forEach(step => {
-        step.classList.remove('active');
-    });
-    
-    // Show target step
-    const targetStep = document.getElementById(`step${stepNumber}`);
-    if (targetStep) {
-        targetStep.classList.add('active');
-        currentStep = stepNumber;
-        updateStepIndicator();
-        adjustHeaderForStep(stepNumber);
-        // Scroll then focus for screen readers
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(() => focusFirstHeading(targetStep), 220);
+    if (!questionnaireData) {
+        console.error('Questionnaire data not loaded');
+        return;
     }
+
+    currentStep = stepNumber;
+    renderStep(stepNumber);
+    updateStepIndicator();
+    adjustHeaderForStep(stepNumber);
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    setTimeout(() => {
+        const stepEl = document.querySelector('.questionnaire-step.active');
+        focusFirstHeading(stepEl);
+    }, 220);
 }
 
-// Language Helpers
 function applyStaticTranslations() {
     const titleEl = document.getElementById('titleText');
     const subEl = document.getElementById('subtitleText');
@@ -123,9 +369,10 @@ function applyStaticTranslations() {
     if (subEl) subEl.textContent = t('subtitle');
 }
 
-// Initialize Application
-window.addEventListener('DOMContentLoaded', () => {
-    // Language switch
+window.addEventListener('DOMContentLoaded', async () => {
+    const loaded = await loadQuestionnaire();
+    if (!loaded) return;
+
     const langSelect = document.getElementById('langSelect');
     if (langSelect) {
         langSelect.value = currentLang;
@@ -136,10 +383,8 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initialize translations
     applyStaticTranslations();
     
-    // Start with step 1 and setup indicator
-    updateStepIndicator();
-    goToStep(1);
+    const startStep = questionnaireData.settings.startStep || '1';
+    goToStep(startStep);
 });

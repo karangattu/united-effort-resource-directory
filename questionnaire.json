@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "United Effort Benefit Navigator Questionnaire",
+  "description": "Dichotomous key questionnaire configuration. Edit this file to modify questions, answers, and navigation flow.",
+  "steps": {
+    "1": {
+      "id": "1",
+      "title": "General Assistance (GA) Awareness",
+      "questionText": "Have you already been told or do you already know that you qualify for General Assistance (GA)?",
+      "helpText": "GA is a monthly cash benefit that can help cover essential living needs. Not sure? We'll help you check.",
+      "type": "choice",
+      "answers": [
+        {
+          "text": "✅ Yes, I already know I qualify / am applying",
+          "value": true,
+          "nextStep": "3",
+          "cssClass": "yes-btn"
+        },
+        {
+          "text": "❓ No / Not sure – show me how to check",
+          "value": false,
+          "nextStep": "2",
+          "cssClass": "no-btn"
+        }
+      ]
+    },
+    "2": {
+      "id": "2",
+      "title": "Check Your Benefits Eligibility",
+      "questionText": "Let's quickly see which benefits (including GA) you might qualify for.",
+      "type": "info",
+      "infoBox": {
+        "text": "Use our benefits checker tool. It only takes a moment and won't submit any official application.",
+        "linkText": "🔍 Open Benefits Eligibility Checker",
+        "linkUrl": "https://www.theunitedeffort.org/benefits-eligibility/",
+        "linkTarget": "_blank"
+      },
+      "navigation": {
+        "showBack": true,
+        "backStep": "1",
+        "showContinue": true,
+        "continueStep": "3",
+        "continueText": "I'm done – continue →"
+      }
+    },
+    "3": {
+      "id": "3",
+      "title": "Housing Assistance Options",
+      "questionText": "What is your current housing situation? Choose the option that best matches today.",
+      "type": "choice",
+      "answers": [
+        {
+          "text": "🏠 I have stable housing",
+          "value": "housed",
+          "nextStep": "4-housed",
+          "cssClass": "housed-btn"
+        },
+        {
+          "text": "🏕️ I do NOT have housing (unhoused)",
+          "value": "unhoused",
+          "nextStep": "4-unhoused",
+          "cssClass": "unhoused-btn"
+        }
+      ],
+      "navigation": {
+        "showBack": true,
+        "backStep": "1"
+      }
+    },
+    "4-unhoused": {
+      "id": "4-unhoused",
+      "title": "Assistance for Unhoused Individuals",
+      "type": "result",
+      "benefits": [
+        {
+          "icon": "🏠",
+          "title": "Shelter Placement Exception",
+          "description": "You may request a <strong>shelter placement requirement exception</strong>. If approved, this can add up to <strong>$193 per month</strong> in benefits.",
+          "checklist": [
+            "Not currently placed in a shelter",
+            "Actively seeking safe placement",
+            "Need help navigating the process"
+          ]
+        }
+      ],
+      "contact": {
+        "title": "📞 Get Help Now",
+        "description": "We can walk you through each step and help you request the exception.",
+        "organizationName": "United Effort Organization",
+        "email": "help@theunitedeffort.org",
+        "phone": "+1 (650) 209-0850",
+        "address": {
+          "line1": "The United Effort Organization, Inc.",
+          "line2": "748 Mercy St",
+          "line3": "Mountain View, CA 94041"
+        }
+      },
+      "navigation": {
+        "showBack": true,
+        "backStep": "3",
+        "showRestart": true
+      }
+    },
+    "4-housed": {
+      "id": "4-housed",
+      "title": "Housing Assistance for Housed Individuals",
+      "type": "result",
+      "benefits": [
+        {
+          "icon": "🏡",
+          "title": "Rent Assistance",
+          "description": "You may qualify for <strong>$50 monthly rent assistance</strong>. This can supplement other benefits you receive."
+        },
+        {
+          "icon": "💡",
+          "title": "Utility Assistance",
+          "type": "conditional",
+          "questionText": "Do you directly pay for utilities like electricity, gas, or water each month?",
+          "answers": [
+            {
+              "text": "✅ Yes – I pay utilities",
+              "value": true,
+              "cssClass": "yes-utilities",
+              "showInfo": true,
+              "infoText": "<strong>Great news!</strong> You may also request up to <strong>$193 per month</strong> toward utilities (if eligible)."
+            },
+            {
+              "text": "❌ No – Included in rent",
+              "value": false,
+              "cssClass": "no-utilities",
+              "showInfo": false
+            }
+          ]
+        }
+      ],
+      "contact": {
+        "title": "📞 Get Help with Applications",
+        "description": "Need help applying? We're preparing guided support resources and can assist you directly.",
+        "organizationName": "United Effort Organization",
+        "email": "help@theunitedeffort.org",
+        "phone": "+1 (650) 209-0850",
+        "address": {
+          "line1": "The United Effort Organization, Inc.",
+          "line2": "748 Mercy St",
+          "line3": "Mountain View, CA 94041"
+        }
+      },
+      "navigation": {
+        "showBack": true,
+        "backStep": "3",
+        "showRestart": true
+      }
+    }
+  },
+  "settings": {
+    "startStep": "1",
+    "totalSteps": 4
+  }
+}
